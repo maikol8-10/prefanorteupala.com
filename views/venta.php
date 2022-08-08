@@ -112,7 +112,8 @@ if (!isset($_SESSION["nombre"])) {
 
                                     <div class="form-group col-lg-2 col-md-2 col-sm-6 col-xs-12" style="width: 100%">
                                         <label>CLICK PARA LEER PRODUCTO</label>
-                                        <input type="number" class="form-control" name="delay" id="ingreso" maxlength="100" placeholder=""
+                                        <input type="number" class="form-control" name="delay" id="ingreso"
+                                               maxlength="100" placeholder=""
                                                style="font-size: 24px; font-weight: bold; color: #0c0c0c;">
                                         <div id="respuesta" hidden></div>
                                     </div>
@@ -140,7 +141,9 @@ if (!isset($_SESSION["nombre"])) {
                                                     style="text-align: end; vertical-align: middle; !important;">
                                                     SUBTOTAL
                                                 </th>
-                                                <th style="width: 115px; !important;"><h4 style="margin: 0;"  id="subTotalV">₡ 0.00</h4><input
+                                                <th style="width: 115px; !important;"><h4 style="margin: 0;"
+                                                                                          id="subTotalV">₡ 0.00</h4>
+                                                    <input
                                                             type="hidden" name="subtotalVenta"
                                                             id="subtotalVenta"></th>
                                             </tr>
@@ -154,7 +157,9 @@ if (!isset($_SESSION["nombre"])) {
                                                     style="text-align: end; vertical-align: middle; !important;">
                                                     IVA
                                                 </th>
-                                                <th style="width: 115px; !important;"><h4 style="margin: 0;" id="montoIva">₡ 0.00</h4><input
+                                                <th style="width: 115px; !important;"><h4 style="margin: 0;"
+                                                                                          id="montoIva">₡ 0.00</h4>
+                                                    <input
                                                             type="hidden" name="totalIvaFinal"
                                                             id="totalIvaFinal"></th>
                                             </tr>
@@ -169,7 +174,7 @@ if (!isset($_SESSION["nombre"])) {
                                                 <th style="text-align: end; !important; vertical-align: middle; !important;">
                                                     PAGO CLIENTE
                                                 </th>
-                                                <th style="width: 115px; !important;"><input type="number"
+                                                <th style="width: 115px; !important;"><input type="number" onchange="modificarSubTotales()"
                                                                                              name="pagoCliente"
                                                                                              id="pagoCliente"
                                                                                              class="form-control"
@@ -200,7 +205,8 @@ if (!isset($_SESSION["nombre"])) {
                                                     style="text-align: end; vertical-align: middle; !important;">
                                                     TOTAL + IVA
                                                 </th>
-                                                <th style="width: 115px; !important;"><h4 style="margin: 0;"  id="total">₡ 0.00</h4><input
+                                                <th style="width: 115px; !important;"><h4 style="margin: 0;" id="total">
+                                                        ₡ 0.00</h4><input
                                                             type="hidden" name="totalVenta"
                                                             id="totalVenta"></th>
                                             </tr>
@@ -252,6 +258,7 @@ if (!isset($_SESSION["nombre"])) {
                             <thead>
                             <th>Opciones</th>
                             <th>Producto</th>
+                            <th>Stock</th>
                             <th>Precio</th>
                             <th>Código</th>
                             </thead>
@@ -261,6 +268,7 @@ if (!isset($_SESSION["nombre"])) {
                             <tfoot>
                             <th>Opciones</th>
                             <th>Producto</th>
+                            <th>Stock</th>
                             <th>Precio</th>
                             <th>Código</th>
                             </tfoot>

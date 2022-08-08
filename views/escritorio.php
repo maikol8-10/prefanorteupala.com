@@ -12,11 +12,7 @@ if (!isset($_SESSION["nombre"])) {
         $regV = $responseVenta->fetch_object();
         $totalV = $regV->totalVenta;
 
-        $responseVenta = $consulta->totalApartadosHoy();
-        $regApa = $responseVenta->fetch_object();
-        $totalApartados = $regApa->totalVenta;
-
-        $responseVenta = $consulta->totalGastosHoy();
+        $responseVenta = $consulta->totalInventariosHoy();
         $regG = $responseVenta->fetch_object();
         $totalG = $regG->totalGastos;
 
@@ -46,7 +42,7 @@ if (!isset($_SESSION["nombre"])) {
         $fechasv = substr($fechasv, 0, -1);
         $totalesv = substr($totalesv, 0, -1);
 
-        $gastos5 = $consulta->totalGastosUltimos5Meses();
+        $gastos5 = $consulta->totalInventariosUltimos5Meses();
         $fechasG = '';
         $totalesG = '';
         while ($regfechaG = $gastos5->fetch_object()) {
@@ -97,16 +93,16 @@ if (!isset($_SESSION["nombre"])) {
                                             <h4 style="font-size:17px;">
                                                 <strong>₡ <?php echo $totalG; ?></strong>
                                             </h4>
-                                            <p>Total de los gastos de Hoy</p>
+                                            <p>Total de Inventarios de Hoy</p>
                                         </div>
                                         <div class="icon">
                                             <i class="ion ion-bag"></i>
                                         </div>
-                                        <a href="gasto.php" class="small-box-footer">Ir a gastos <i
+                                        <a href="inventario.php" class="small-box-footer">Ir a Inventarios <i
                                                     class="fa fa-arrow-circle-right"></i></a>
                                     </div>
                                 </div>
-                                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+                                <!--<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
                                     <div class="small-box bg-yellow">
                                         <div class="inner">
                                             <h4 style="font-size:17px;">
@@ -120,7 +116,7 @@ if (!isset($_SESSION["nombre"])) {
                                         <a href="./venta.php?view=apartados" class="small-box-footer">Ir a apartados <i
                                                     class="fa fa-arrow-circle-right"></i></a>
                                     </div>
-                                </div>
+                                </div>-->
                             </div>
                             <div class="panel-body">
                                 <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
@@ -149,7 +145,7 @@ if (!isset($_SESSION["nombre"])) {
                                     <div class="box box-primary">
                                         <div class="box-header with-border"
                                              style="font-weight: bold;!important; font-size: 16px;!important;">
-                                            Gastos de los últimos 5 meses
+                                            Inventarios de los últimos 5 meses
                                         </div>
                                         <div class="box-body">
                                             <canvas id="gastosUltimosCincoMeses" width="400" height="300"></canvas>
@@ -271,7 +267,7 @@ if (!isset($_SESSION["nombre"])) {
             data: {
                 labels: [<?php echo $fechasG; ?>],
                 datasets: [{
-                    label: 'Gastos en ₡ de los últimos 5 Meses',
+                    label: 'Inventarios en ₡ de los últimos 5 Meses',
                     data: [<?php echo $totalesG; ?>],
                     backgroundColor: [
                         'rgba(255, 99, 132, 0.2)',

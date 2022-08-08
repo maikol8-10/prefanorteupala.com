@@ -17,6 +17,7 @@ class Consulta
         $sql = "SELECT IFNULL(SUM(totalVenta),0) as totalVenta FROM venta WHERE DATE(fechaHora)='$fechaHora' AND estado='Aceptado'";
         return ejecutarConsulta($sql);
     }
+
     public function totalApartadosHoy()
     {
         date_default_timezone_set("America/Costa_Rica"); //Set de fecha local
@@ -33,9 +34,18 @@ class Consulta
         return ejecutarConsulta($sql);
     }
 
-    public function totalGastosUltimos5Meses()
+    public function totalInventariosHoy()
     {
-        $sql = "SELECT DATE_FORMAT(fechaHora,'%M') as fecha,SUM(monto) as total FROM gastos GROUP by MONTH(fechaHora) ORDER BY fechaHora DESC limit 0,5";
+        date_default_timezone_set("America/Costa_Rica"); //Set de fecha local
+        $fechaHora = date("Y-m-d");
+        $sql = "SELECT IFNULL (SUM(i.cantidadConstruido*p.precio),0) as totalGastos FROM inventario i
+INNER JOIN producto p ON i.idProducto= p.idProducto WHERE i.estado!=2 AND DATE(fecha)='$fechaHora'";
+        return ejecutarConsulta($sql);
+    }
+
+    public function totalInventariosUltimos5Meses()
+    {
+        $sql = "SELECT DATE_FORMAT(fecha,'%M') as fecha,SUM(i.cantidadConstruido* p.precio) as total FROM inventario i INNER JOIN producto p ON i.idProducto= p.idProducto WHERE i.estado!=2 GROUP by MONTH(fecha)  ORDER BY fecha DESC limit 0,5;";
         return ejecutarConsulta($sql);
     }
 
@@ -56,15 +66,34 @@ class Consulta
         $sql = "SELECT DATE(v.fechaHora) as fecha,u.nombre as usuario, CONCAT(p.nombre,' ',p.apellido) as cliente,v.tipoPago,v.numeroComprobante,v.totalVenta,v.estado FROM venta v INNER JOIN cliente p ON v.idCliente=p.idCliente INNER JOIN usuario u ON v.idUsuario=u.idUsuario WHERE DATE(v.fechaHora)>='$fecha_inicio' AND DATE(v.fechaHora)<='$fecha_fin' AND v.estado<>'Pendiente'";
         return ejecutarConsulta($sql);
     }
+
     public function gastosPorFecha($fecha_inicio, $fecha_fin)
     {
         $sql = "SELECT g.idGasto, DATE(g.fechaHora) as fecha, g.descripcion, g.monto,u.idUsuario, u.usuario as usuario FROM gastos g INNER JOIN usuario u ON g.idUsuario=u.idUsuario WHERE DATE(g.fechaHora)>='$fecha_inicio' AND DATE(g.fechaHora)<='$fecha_fin'";
         return ejecutarConsulta($sql);
     }
 
+
+    public function inventariosPorFecha($fecha_inicio, $fecha_fin)
+    {
+        $sql = "SELECT i.idInventario, DATE(i.fecha) as fecha, i.cantidadConstruido, p.descripcion, c.categoria, p.precio, p.stock, u.usuario FROM inventario i 
+INNER JOIN producto p ON i.idProducto=p.idProducto
+INNER JOIN categoria c ON p.idCategoria=c.idCategoria
+INNER JOIN usuario u ON i.idUsuario=u.idUsuario WHERE i.estado!=2 AND DATE(i.fecha)>='$fecha_inicio' AND DATE(i.fecha)<='$fecha_fin'";
+        return ejecutarConsulta($sql);
+    }
+
+
     public function totalGastosPorFecha($fecha_inicio, $fecha_fin)
     {
         $sql = "SELECT IFNULL(SUM(monto),0) as totalGastos FROM gastos g WHERE DATE(g.fechaHora)>='$fecha_inicio' AND DATE(g.fechaHora)<='$fecha_fin'";
+        return ejecutarConsulta($sql);
+    }
+
+    public function totalInventariosPorFecha($fecha_inicio, $fecha_fin)
+    {
+        $sql = "SELECT IFNULL (SUM(i.cantidadConstruido*p.precio),0) as totalInventarios FROM inventario i
+INNER JOIN producto p ON i.idProducto= p.idProducto WHERE i.estado!=2 AND DATE(i.fecha)>='$fecha_inicio' AND DATE(i.fecha)<='$fecha_fin'";
         return ejecutarConsulta($sql);
     }
 
@@ -76,7 +105,7 @@ class Consulta
 
     public function ventasUltimos_12meses()
     {
-        $sql = "SELECT DATE_FORMAT(fechaHora,'%M') as fecha,SUM(totalVenta) as total FROM venta GROUP by MONTH(fechaHora) ORDER BY fechaHora DESC limit 0,10";
+        $sql = "SELECT DATE_FORMAT(fechaHora,'%M') as fecha, IFNULL (SUM(totalVenta),0) as total FROM venta GROUP by MONTH(fechaHora) ORDER BY fechaHora DESC limit 0,10";
         return ejecutarConsulta($sql);
     }
 }

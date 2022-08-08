@@ -204,10 +204,11 @@ switch ($_GET["op"]) {
         $data = array();
         while ($reg = $rspta->fetch_object()) {
             $data[] = array(
-                "0" => '<button class="btn btn-primary" onclick="agregarDetalle(' . $reg->idProducto . ', \'' . $reg->categoria.' '. $reg->descripcion . '\',\'' . $reg->precio . '\')"><span class="fa fa-shopping-cart"></span> Agregar</button>',
+                "0" => $reg->stock>0?'<button class="btn btn-primary" onclick="agregarDetalle(' . $reg->idProducto . ', \'' . $reg->categoria.' '. $reg->descripcion . '\',\'' . $reg->precio . '\',\'' . $reg->stock . '\')"><span class="fa fa-shopping-cart"></span> Agregar</button>': '<span style="color: red">Sin Stock</span>',
                 "1" => $reg->categoria.' '.$reg->descripcion,
-                "2" => $reg->precio,
-                "3" => $reg->codigo
+                "2" => $reg->stock,
+                "3" => $reg->precio,
+                "4" => $reg->codigo
             );
         }
         $results = array(

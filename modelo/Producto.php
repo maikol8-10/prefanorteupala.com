@@ -33,7 +33,7 @@ class Producto
     //Implementamos un metodo para listar los registros
     public function listar()
     {
-        $sql = "SELECT categoria.categoria,producto.idProducto, producto.idCategoria, producto.descripcion, producto.precio, producto.codigo, producto.estado
+        $sql = "SELECT categoria.categoria,producto.idProducto, producto.idCategoria, producto.descripcion, producto.precio, producto.codigo, producto.estado, producto.stock
 FROM producto
 INNER JOIN categoria ON producto.idCategoria = categoria.idCategoria;";
         return ejecutarConsulta($sql);
@@ -56,7 +56,7 @@ INNER JOIN categoria ON producto.idCategoria = categoria.idCategoria;";
     //Implementar un método para listar los registros activos, su último precio y el stock (vamos a unir con el último registro de la tabla detalle_ingreso)
     public function listarActivosVenta()
     {
-        $sql = "SELECT a.idProducto,a.codigo, c.categoria, a.descripcion,a.precio,a.estado FROM producto a inner join categoria  c on c.idCategoria=a.idCategoria WHERE a.estado='1'";
+        $sql = "SELECT a.idProducto, a.stock, a.codigo, c.categoria, a.descripcion,a.precio,a.estado FROM producto a inner join categoria  c on c.idCategoria=a.idCategoria WHERE a.estado='1'";
         return ejecutarConsulta($sql);
     }
 }

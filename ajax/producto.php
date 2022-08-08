@@ -26,9 +26,10 @@ switch ($_GET["op"]) {
                     ' <button class="btn btn-success" onclick="activar(' . $reg->idProducto . ')"><i class="fa fa-check"></i> Activar</button>',
                 "1" => $reg->categoria,
                 "2" => $reg->descripcion,
-                "3" =>'₡' . $reg->precio,
+                "3" => '₡' . $reg->precio,
                 "4" => $reg->codigo,
-                "5" => ($reg->estado) ? '<span class="label bg-green">Activado</span>' :
+                "5" => $reg->stock,
+                "6" => ($reg->estado) ? '<span class="label bg-green">Activado</span>' :
                     '<span class="label bg-red">Desactivado</span>'
             );
         }
@@ -41,11 +42,11 @@ switch ($_GET["op"]) {
         break;
     case 'guardaryeditar':
         if (empty($idProducto)) {
-            $respuesta = $producto->insertar($idCategoria,$codigo, $descripcion, $precio);
+            $respuesta = $producto->insertar($idCategoria, $codigo, $descripcion, $precio);
             echo $respuesta ? "Producto registrada" : "Producto no se pudo registrar, puede que ya exista el código ingresado";
             //echo $respuesta ? "Producto registrada" : $idProducto;
         } else {
-            $respuesta = $producto->editar($idProducto,$idCategoria, $codigo, $descripcion, $precio);
+            $respuesta = $producto->editar($idProducto, $idCategoria, $codigo, $descripcion, $precio);
             echo $respuesta ? "Producto actualizada" : "Producto no se pudo actualizar";
         }
         break;
@@ -80,6 +81,14 @@ switch ($_GET["op"]) {
         $rspta = $categoria->listar();
         while ($reg = $rspta->fetch_object()) {
             echo '<option value=' . $reg->idCategoria . '>' . $reg->categoria . '</option>';
+        }
+        break;
+
+    case 'selectProdutoWithCategoria':
+        require_once "../modelo/Categoria.php";
+        $rspta = $producto->listar();
+        while ($reg = $rspta->fetch_object()) {
+            echo '<option value=' . $reg->idProducto . '>' . $reg->categoria . ' ' . $reg->descripcion . '</option>';
         }
         break;
 }

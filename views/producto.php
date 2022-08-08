@@ -38,6 +38,7 @@ if (!isset($_SESSION["nombre"])) {
                                     <th>Descripcion</th>
                                     <th>Precio</th>
                                     <th>Código</th>
+                                    <th>Stock</th>
                                     <th>Estado</th>
                                     </thead>
                                     <tbody>
@@ -48,6 +49,7 @@ if (!isset($_SESSION["nombre"])) {
                                     <th>Descripcion</th>
                                     <th>Precio</th>
                                     <th>Código</th>
+                                    <th>Stock</th>
                                     <th>Estado</th>
                                     </tfoot>
                                 </table>

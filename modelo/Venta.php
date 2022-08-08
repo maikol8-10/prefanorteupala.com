@@ -10,7 +10,7 @@ class Venta
     }
 
     //Implementamos un método para insertar registros
-    public function insertar($idCliente, $idUsuario, $tipoPago, $tipoComprobante, $numeroComprobante, $fechaHora, $pagoCliente, $vueltoCliente, $totalVenta,$iva, $idProducto, $cantidad, $precioVenta, $descuento)
+    public function insertar($idCliente, $idUsuario, $tipoPago, $tipoComprobante, $numeroComprobante, $fechaHora, $pagoCliente, $vueltoCliente, $totalVenta, $iva, $idProducto, $cantidad, $precioVenta, $descuento)
     {
         $estado = "Aceptado";
         $sql = "INSERT INTO venta (idCliente,idUsuario,tipoPago,tipoComprobante,numeroComprobante,fechaHora,pagoCliente,vueltoCliente,totalVenta,iva, estado)
@@ -56,6 +56,17 @@ class Venta
         $this->disminuirTotalVenta($decode->totalVenta, $decode->idUsuario, $decode->fecha);
         //$this->disminuirTotalFinal($decode->totalVenta, $decode->idUsuario, $decode->fecha);
         $this->aumentarSaldo($decode->vueltoCliente, $decode->idUsuario, $decode->fecha);
+
+        $rsptad = $this->ventaDetalle($idVenta);
+        while ($regd = $rsptad->fetch_object()) {
+            $this->aumentarStock($regd->cantidad, $regd->idProducto);
+        }
+        return ejecutarConsulta($sql);
+    }
+
+    public function aumentarStock($cantidadConstruido, $idProducto)
+    {
+        $sql = "UPDATE producto SET stock = stock + '$cantidadConstruido' WHERE producto.idProducto = '$idProducto'";
         return ejecutarConsulta($sql);
     }
 
@@ -122,7 +133,7 @@ class Venta
 
     public function ventaDetalle($idVenta)
     {
-        $sql = "SELECT p.descripcion as producto ,p.codigo,d.cantidad,d.precioVenta,d.descuento,((d.cantidad*d.precioVenta)*(d.descuento)/100) as descuentoColones FROM detalle_venta d INNER JOIN producto  p ON d.idProducto=p.idProducto WHERE d.idVenta='$idVenta'";
+        $sql = "SELECT p.descripcion as producto ,p.codigo,d.cantidad,d.precioVenta,d.idProducto,d.descuento,((d.cantidad*d.precioVenta)*(d.descuento)/100) as descuentoColones FROM detalle_venta d INNER JOIN producto  p ON d.idProducto=p.idProducto WHERE d.idVenta='$idVenta'";
         return ejecutarConsulta($sql);
     }
 

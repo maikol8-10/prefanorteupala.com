@@ -241,11 +241,12 @@ const anular = (idVenta) => {
         }
     })
 }
-const addProducto = (id, descripcion, cantidad, precio) => {
+const addProducto = (id, descripcion, cantidad, precio, stock) => {
     productos.push({
         id: id,
         descripcion: descripcion,
         cantidad: cantidad,
+        stock: stock,
         precio: precio
     })
 };
@@ -259,7 +260,7 @@ function inArray(arreglo, elemento) {
  * @param idProducto
  * @param prenda
  */
-const agregarDetalle = (idProducto, descripcion, precio) => {
+const agregarDetalle = (idProducto, descripcion, precio, stock) => {
     if (productos.some(e => e.id === idProducto)) {
         let objIndex = productos.findIndex((obj => obj.id === idProducto));
         productos[objIndex].cantidad = productos[objIndex].cantidad + 1;
@@ -267,7 +268,7 @@ const agregarDetalle = (idProducto, descripcion, precio) => {
         renderDetalles();
         console.log(true);
     } else {
-        addProducto(idProducto, descripcion, 1, precio);
+        addProducto(idProducto, descripcion, 1, precio, stock);
         renderDetalles();
         console.log(false);
     }
@@ -311,10 +312,10 @@ function renderDetalles() {
         fila += '<tr class="filas" id="fila' + cont + '">' +
             '<td><button type="button" class="btn btn-danger" onclick="eliminarDetalle(' + cont + ', ' + prenda + ')"><i class="fa fa-trash"></i> Eliminar</button></td>' +
             '<td><input type="hidden" name="idProducto[]" min="1" max="999999" value="' + productos[prenda].id + '">' + productos[prenda].descripcion + '</td>' +
-            '<td><input type="number" class="form-control" min="0" max="999999" name="cantidad[]" id="cantidad[]" value="' + productos[prenda].cantidad + '"></td>' +
-            '<td><input type="number" class="form-control" min="0" max="999999"  name="precioVenta[]" id="precioVenta[]" value="' + productos[prenda].precio + '"></td>' +
-            '<td><input type="number" class="form-control" min="0" max="999999"  name="iva[]" id="iva[]" value="' + iva + '"></td>' +
-            '<td><input type="number" class="form-control" min="0" max="999999" name="descuento[]" value="' + descuento + '"></td>' +
+            '<td><input id="cantidad-' + productos[prenda].id + '" type="number" class="form-control" min="0" max="999999" onchange="validarStock(' + productos[prenda].id + ')" name="cantidad[]" id="cantidad[]" value="' + productos[prenda].cantidad + '"></td>' +
+            '<td><input type="number" class="form-control" min="0" max="999999" onchange="modificarSubTotales()"  name="precioVenta[]" id="precioVenta[]" value="' + productos[prenda].precio + '"></td>' +
+            '<td><input type="number" class="form-control" min="0" max="999999" onchange="modificarSubTotales()"   name="iva[]" id="iva[]" value="' + iva + '"></td>' +
+            '<td><input type="number" class="form-control" min="0" max="999999" onchange="modificarSubTotales()" name="descuento[]" value="' + descuento + '"></td>' +
             '<td><span name="subtotal" id="subtotal' + cont + '">' + '₡' + subtotal + '</span></td>' +
             '</tr>';
         cont++;
@@ -323,6 +324,23 @@ function renderDetalles() {
     $('#detalles tbody').append(fila);
     $("#btnCalcularTotales").show();
     modificarSubTotales();
+}
+
+function validarStock(idProducto) {
+    let producto = productos.filter(({id}) => id === idProducto);
+    if (parseInt(producto[0].stock) < parseInt($("#cantidad-" + idProducto).val())) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Sin Stock disponible para el producto',
+            showConfirmButton: false,
+            timer: 1500
+        })
+        $("#btnGuardar").hide()
+    } else {
+        $("#btnGuardar").show()
+    }
+    modificarSubTotales();
+
 }
 
 /**

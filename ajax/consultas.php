@@ -61,6 +61,35 @@ switch ($_GET["op"]) {
         echo json_encode($results);
 
         break;
+    case 'inventariosPorFechas':
+        $fecha_inicio = $_REQUEST["fecha_inicio"];
+        $fecha_fin = $_REQUEST["fecha_fin"];
+
+        $rspta = $consulta->inventariosPorFecha($fecha_inicio, $fecha_fin);
+        //Vamos a declarar un array
+        $data = array();
+
+        while ($reg = $rspta->fetch_object()) {
+            $data[] = array(
+                "0" => $reg->idInventario,
+                "1" => $reg->usuario,
+                "2" => $reg->fecha,
+                "3" => $reg->categoria . ' ' . $reg->descripcion,
+                "4" => '₡' . $reg->precio,
+                "5" => $reg->cantidadConstruido,
+                "6" => '₡' . $reg->precio * $reg->cantidadConstruido.'.00',
+
+            );
+        }
+        $results = array(
+            "sEcho" => 1, //Información para el datatables
+            "iTotalRecords" => count($data), //enviamos el total registros al datatable
+            "iTotalDisplayRecords" => count($data), //enviamos el total registros a visualizar
+            "aaData" => $data);
+        echo json_encode($results);
+
+        break;
+
     case 'gastosPorFecha':
         $fecha_inicio = $_REQUEST["fecha_inicio"];
         $fecha_fin = $_REQUEST["fecha_fin"];
@@ -86,6 +115,8 @@ switch ($_GET["op"]) {
         echo json_encode($results);
 
         break;
+
+
     case 'totalVentasPorFechas':
         $fecha_inicio = $_REQUEST["fecha_inicio"];
         $fecha_fin = $_REQUEST["fecha_fin"];
@@ -100,6 +131,15 @@ switch ($_GET["op"]) {
         $rspta = $consulta->totalGastosPorFecha($fecha_inicio, $fecha_fin);
         $regV = $rspta->fetch_object();
         $totalV = $regV->totalGastos;
+        echo $totalV;
+        break;
+
+    case 'totalInventarioPorFechas':
+        $fecha_inicio = $_REQUEST["fecha_inicio"];
+        $fecha_fin = $_REQUEST["fecha_fin"];
+        $rspta = $consulta->totalInventariosPorFecha($fecha_inicio, $fecha_fin);
+        $regV = $rspta->fetch_object();
+        $totalV = $regV->totalInventarios;
         echo $totalV;
         break;
 }

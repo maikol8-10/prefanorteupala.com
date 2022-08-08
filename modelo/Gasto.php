@@ -32,7 +32,8 @@ class Gasto
     {
         date_default_timezone_set("America/Costa_Rica");
         $fechaHoy = date("Y-m-d");
-        $sql = "SELECT * FROM gastos WHERE fechaHora='$fechaHoy' AND idUsuario='$idUsuario'";
+        //$sql = "SELECT * FROM gastos WHERE fechaHora='$fechaHoy' AND idUsuario='$idUsuario'";
+        $sql = "SELECT * FROM gastos";
         return ejecutarConsulta($sql);
     }
 

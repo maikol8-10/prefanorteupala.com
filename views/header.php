@@ -129,14 +129,14 @@
                     echo '<li class="treeview">
                     <a href="#">
                         <i class="fa fa-home"></i>
-                        <span>Tienda</span>
+                        <span>Prefabricado</span>
                         <i class="fa fa-angle-left pull-right"></i>
                     </a>
                     <ul class="treeview-menu">
                         <li><a href="caja.php"><i class="fa fa-inbox"></i> Caja</a></li>
                         <li><a href="gasto.php  "><i class="fa fa-money"></i> Gastos</a></li>
                         <li><a href="producto.php"><i class="fa fa-barcode"></i> Producto</a></li>
-                        <li><a href="inventario.php"><i class="fa fa-barcode"></i> Agregar Inventario</a></li>
+                        <li><a href="inventario.php"><i class="fa fa-ticket"></i> Inventario</a></li>
                         <!--<li><a href="categoria.php"><i class="fa fa-circle-o"></i> Categorías</a></li>-->
                     </ul>
                 </li>';
@@ -183,6 +183,7 @@
                         <li><a href="consultaVentasCliente.php"><i class="fa fa-bar-chart"></i>Ventas Por Cliente</a></li>
                         <li><a href="consultaVentasFechas.php"><i class="fa fa-bar-chart"></i>Ventas Por Fechas</a></li>
                         <li><a href="consultaGastosFechas.php"><i class="fa fa-bar-chart"></i>Gastos Por Fechas</a></li>
+                        <li><a href="consultaInventarioFechas.php"><i class="fa fa-bar-chart"></i>Inventarios Por Fechas</a></li>
                     </ul>
                 </li>';
                 }
