@@ -85,7 +85,6 @@ function resetForm() {
     $("#btnCancelar").show();
     $("#btnAgregarArt").show();
     $("#vuelto").text('₡0');
-    $("#total").text('₡0');
     $("#subTotalV").text('₡0');
     $("#montoIva").text('₡0');
     $("#tipoPago").val("SinpeMovil");
@@ -95,6 +94,8 @@ function resetForm() {
     $("#tr-vuelto").hide();
     $("#formularioregistros").show();
     detalles = 0;
+    $("#tr-subtotal").attr("hidden", false);
+    $("#tr-iva").attr("hidden", false);
 }
 
 /**
@@ -261,16 +262,25 @@ function inArray(arreglo, elemento) {
  * @param prenda
  */
 const agregarDetalle = (idProducto, descripcion, precio, stock) => {
-    if (productos.some(e => e.id === idProducto)) {
-        let objIndex = productos.findIndex((obj => obj.id === idProducto));
-        productos[objIndex].cantidad = productos[objIndex].cantidad + 1;
-        //productos[objIndex].precio = parseInt(productos[objIndex].precio) + parseInt(precio);
-        renderDetalles();
-        console.log(true);
+    if (parseInt(stock) <= parseInt($("#cantidad-" + idProducto).val())) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Sin Stock disponible para el producto',
+            showConfirmButton: false,
+            timer: 1500
+        })
     } else {
-        addProducto(idProducto, descripcion, 1, precio, stock);
-        renderDetalles();
-        console.log(false);
+        if (productos.some(e => e.id === idProducto)) {
+            let objIndex = productos.findIndex((obj => obj.id === idProducto));
+            productos[objIndex].cantidad = productos[objIndex].cantidad + 1;
+            //productos[objIndex].precio = parseInt(productos[objIndex].precio) + parseInt(precio);
+            renderDetalles();
+            console.log(true);
+        } else {
+            addProducto(idProducto, descripcion, 1, precio, stock);
+            renderDetalles();
+            console.log(false);
+        }
     }
     //renderDetalles(idProducto);
     /*let cantidad = 1, descuento = 0, precioVenta = 0, subtotal = 0;
@@ -328,7 +338,7 @@ function renderDetalles() {
 
 function validarStock(idProducto) {
     let producto = productos.filter(({id}) => id === idProducto);
-    if (parseInt(producto[0].stock) < parseInt($("#cantidad-" + idProducto).val())) {
+    if (parseInt(producto[0].stock) <= parseInt($("#cantidad-" + idProducto).val())) {
         Swal.fire({
             icon: 'error',
             title: 'Sin Stock disponible para el producto',
@@ -340,7 +350,6 @@ function validarStock(idProducto) {
         $("#btnGuardar").show()
     }
     modificarSubTotales();
-
 }
 
 /**
@@ -393,6 +402,7 @@ const modificarSubTotales = () => {
  */
 const calcularTotales = () => {
     let sub = document.getElementsByName("subtotal");
+    let totalTransporte = $("#totalTransporte").val();
     let subtotalVenta = 0.0;
     for (let i = 0; i < sub.length; i++) {
         subtotalVenta += document.getElementsByName("subtotal")[i].value;
@@ -404,8 +414,8 @@ const calcularTotales = () => {
 
     } else {
         vuelto = $("#pagoCliente").val() - subtotalVenta;
-        $("#total").html("₡ " + decimalSeparator(subtotalVenta));
-        $("#totalVenta").val(subtotalVenta);
+        $("#total").html("₡ " + decimalSeparator(subtotalVenta + myRound(totalTransporte, 2)));
+        $("#totalVenta").val(subtotalVenta + myRound(totalTransporte, 2));
     }
     if (flagEfectivo) {
         $("#vuelto").html("₡ " + decimalSeparator(vuelto));
@@ -418,6 +428,10 @@ const calcularTotales = () => {
     evaluar();
     validarVentaEfectivo();
 }
+
+$("#totalTransporte").keypress(function () {
+    calcularTotales();
+});
 
 /**
  * Permite envaluar si existen lineas en el detalle

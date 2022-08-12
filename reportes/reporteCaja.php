@@ -34,7 +34,7 @@ if (!isset($_SESSION["nombre"])) {
                     <td align="center" style="display: flex; flex-direction: column;">
                         <!-- Mostramos los datos de la empresa en el documento HTML -->
                         <!--.::<strong> <?php ?></strong>::.<br>-->
-                        <img src="../public/images/logoSteph.png" class="img-responsive col-md-12" alt="img-boutique"
+                        <img src="../public/images/prefaNorte.png" class="img-responsive col-md-12" alt="img-boutique"
                              style="align-self: center; width: 100px;">
                     </td>
 
@@ -60,7 +60,7 @@ if (!isset($_SESSION["nombre"])) {
                 <tr>
                     <td style="font-weight: bold">Saldo
                         Inicial: <?php $saldoInicial = ($reg->saldo + $reg->totalVentas + $reg->totalVueltoEfectivoClientes + $reg->totalGastos) - ($reg->totalVentas);
-                        echo '' . $saldoInicial; ?></td>
+                        echo '' . $reg->saldo; ?></td>
                     <td align="right" style="font-weight: bold">Total
                         Ventas: <?php echo '' . $reg->totalVentas; ?></td>
                 </tr>
@@ -83,9 +83,9 @@ if (!isset($_SESSION["nombre"])) {
                 </tr>-->
                 <?php
                 echo "<tr>";
-                echo "<td>-" . $reg->totalGastos . "&nbsp&nbsp&nbsp</td>";
-                echo "<td>" . ($reg->saldo + $reg->totalPagoEfectivoClientes)."&nbsp&nbsp&nbsp</td>";
-                echo "<td align='right'> " . ($reg->saldo + $reg->totalVentas + $reg->totalVueltoEfectivoClientes) . "</td>";
+                echo "<td>-" . $reg->totalGastos . "&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</td>";
+                echo "<td>" . (($reg->saldo + $reg->totalPagoEfectivoClientes) - ($reg->totalVueltoEfectivoClientes + $reg->totalGastos))."&nbsp&nbsp&nbsp</td>";
+                echo "<td align='right'> " . (($reg->saldo + $reg->totalVentas) - ($reg->totalVueltoEfectivoClientes + $reg->totalGastos)) . "</td>";
                 echo "</tr>";
                 ?>
                 <!-- Mostramos los totales de la venta en el documento HTML -->

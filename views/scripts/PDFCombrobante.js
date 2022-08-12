@@ -702,8 +702,6 @@ const generarPDF = async (idVenta) => {
         data = JSON.parse(data);
         detalleVenta = data;
     });
-    console.log(venta)
-    console.log(detalleVenta)
     let descuentoTotal = 0;
     descuentoTotal += detalleVenta.data.map(item => myRound(item.descuentoColones, 2)).reduce((prev, curr) => prev + curr, 0);
 
@@ -716,7 +714,7 @@ const generarPDF = async (idVenta) => {
         ArrayBuffer: "arraybuffer", //return ArrayBuffer format
     };
 
-
+    console.log(venta);
     let props = {
         outputType: OutputType.Save,
         returnJsPDFDocObject: true,
@@ -812,7 +810,7 @@ const generarPDF = async (idVenta) => {
             additionalRows: [
                 {
                     col1: 'SubTotal:',
-                    col2: (myRound(venta.totalVenta, 2)-myRound(venta.iva, 2)).toString(),
+                    col2: (myRound(venta.totalVenta, 2) - myRound(venta.iva, 2)).toString(),
                     col3: '',
                     style: {
                         fontSize: 10 //optional, default 12
@@ -829,6 +827,14 @@ const generarPDF = async (idVenta) => {
                 {
                     col1: 'Descuento:',
                     col2: myRound(descuentoTotal, 2).toString(),
+                    col3: '',
+                    style: {
+                        fontSize: 10 //optional, default 12
+                    }
+                },
+                {
+                    col1: 'Transporte:',
+                    col2: myRound(venta.totalTransporte, 2).toString(),
                     col3: '',
                     style: {
                         fontSize: 10 //optional, default 12

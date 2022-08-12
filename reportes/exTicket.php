@@ -136,13 +136,18 @@ if (!isset($_SESSION["nombre"])) {
                 </tr>
                 <tr style="display: flex; justify-content: flex-end;">
                     <td>&nbsp;</td>
+                    <td align="right">IVA:</td>
+                    <td align="right"> <?php echo $reg->iva; ?></td>
+                </tr>
+                <tr style="display: flex; justify-content: flex-end;">
+                    <td>&nbsp;</td>
                     <td align="right">Descuento:</td>
                     <td align="right"> <?php echo $descuentoTotal; ?></td>
                 </tr>
                 <tr style="display: flex; justify-content: flex-end;">
                     <td>&nbsp;</td>
-                    <td align="right">IVA:</td>
-                    <td align="right"> <?php echo $reg->iva; ?></td>
+                    <td align="right">Transporte:</td>
+                    <td align="right"> <?php echo $reg->totalTransporte; ?></td>
                 </tr>
                 <tr style="display: flex; justify-content: flex-end;">
                     <td>&nbsp;</td>

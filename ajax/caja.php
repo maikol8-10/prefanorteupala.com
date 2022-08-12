@@ -43,7 +43,7 @@ switch ($_GET["op"]) {
                 "4" => '₡-' . $reg->totalGastos,
                 "5" => '₡' . $reg->totalVentas,
                 "6" => '₡' . (($reg->saldo + $reg->totalPagoEfectivoClientes) - ($reg->totalVueltoEfectivoClientes + $reg->totalGastos)),
-                "7" => '₡' . (($reg->saldo + $reg->totalVentas + $reg->totalVueltoEfectivoClientes) - ($reg->totalVueltoEfectivoClientes + $reg->totalGastos)),
+                "7" => '₡' . (($reg->saldo + $reg->totalVentas) - ($reg->totalVueltoEfectivoClientes + $reg->totalGastos)),
                 "8" => ($reg->estado === 'abierta') ? '<span class="label bg-green">Abierta</span>' :
                     '<span class="label bg-red">Cerrada</span>'
             );

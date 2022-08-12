@@ -21,13 +21,14 @@ $fechaHora = isset($_POST["fechaHora"]) ? limpiarCadena($_POST["fechaHora"]) : "
 $pagoCliente = isset($_POST["pagoCliente"]) ? limpiarCadena($_POST["pagoCliente"]) : "";
 $vueltoCliente = isset($_POST["vueltoCliente"]) ? limpiarCadena($_POST["vueltoCliente"]) : "";
 $totalVenta = isset($_POST["totalVenta"]) ? limpiarCadena($_POST["totalVenta"]) : "";
+$totalTransporte = isset($_POST["totalTransporte"]) ? limpiarCadena($_POST["totalTransporte"]) : "";
 $iva = isset($_POST["totalIvaFinal"]) ? limpiarCadena($_POST["totalIvaFinal"]) : "";
 
 switch ($_GET["op"]) {
     case 'guardaryeditar':
         if (empty($idVenta)) {
 
-            $rspta = $venta->insertar($idCliente, $idUsuario, $tipoPago, $tipoComprobante, $numeroComprobante, $fechaHora, $pagoCliente, $vueltoCliente, $totalVenta,$iva, $_POST["idProducto"], $_POST["cantidad"], $_POST["precioVenta"], $_POST["descuento"]);
+            $rspta = $venta->insertar($idCliente, $idUsuario, $tipoPago, $tipoComprobante, $numeroComprobante, $fechaHora, $pagoCliente, $vueltoCliente, $totalVenta, $iva,$totalTransporte, $_POST["idProducto"], $_POST["cantidad"], $_POST["precioVenta"], $_POST["descuento"]);
             /*foreach ($_POST["cantidad"] as $value) {
                           echo $value, "\n";
                       }*/
@@ -71,11 +72,29 @@ switch ($_GET["op"]) {
 
         while ($reg = $rspta->fetch_object()) {
             $descuentoColones = substr($reg->descuentoColones, 0, -5);
-            echo '<tr class="filas"><td></td><td>'. $reg->categoria .' '. $reg->descripcion . '</td><td>' . $reg->cantidad . '</td><td>' . '₡' . $reg->precioVenta . '</td><td>' . $reg->descuento . '%' . '</td><td>' . '₡' . ($reg->precioVenta * $reg->cantidad - $descuentoColones) . '</td></tr>';
+            echo '<tr class="filas"><td></td><td>' . $reg->categoria . ' ' . $reg->descripcion . '</td><td>' . $reg->cantidad . '</td><td>' . '₡' . $reg->precioVenta . '</td><td>' . $reg->descuento . '%' . '</td><td>' . '₡' . ($reg->precioVenta * $reg->cantidad - $descuentoColones) . '</td></tr>';
             $total = $total + ($reg->precioVenta * $reg->cantidad - $descuentoColones);
         }
         echo '<tfoot>
-              <tr>
+               <tr id="tr-subtotal" hidden>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th style="text-align: end; !important; vertical-align: middle; !important;">SUBTOTAL</th>
+                    <th><h4 id="total">₡ 0</h4><input type="hidden" name="subTotalV" id="subTotalV"></th>
+              </tr> 
+              
+              <tr id="tr-iva" hidden>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th style="text-align: end; !important; vertical-align: middle; !important;">IVA</th>
+                    <th><h4 id="total">₡ 0</h4><input type="hidden" name="totalIvaFinal" id="totalIvaFinal"></th>
+              </tr>
+              
+              <tr >
                     <th></th>
                     <th></th>
                     <th></th>
@@ -83,6 +102,7 @@ switch ($_GET["op"]) {
                     <th style="text-align: end; !important; vertical-align: middle; !important;">TOTAL</th>
                     <th><h4 id="total">₡' . $total . '</h4><input type="hidden" name="totalVenta" id="totalVenta"></th>
               </tr> 
+              
               <tr id="tr-pago" hidden>
                     <th></th>
                     <th></th>
@@ -90,7 +110,7 @@ switch ($_GET["op"]) {
                     <th></th>
                     <th style="text-align: end; !important; vertical-align: middle; !important;">PAGO CLIENTE
                     </th>
-                    <th style="width: 115px; !important;"><input type="number"name="pagoCliente" id="pagoCliente"class="form-control"
+                    <th style="width: 115px; !important;"><input onchange="modificarSubTotales()" onkeyup="modificarSubTotales()" type="number"name="pagoCliente" id="pagoCliente"class="form-control"
                      min="0" max="999999"></th>
               </tr>
               <tr id="tr-vuelto" hidden>
@@ -204,8 +224,8 @@ switch ($_GET["op"]) {
         $data = array();
         while ($reg = $rspta->fetch_object()) {
             $data[] = array(
-                "0" => $reg->stock>0?'<button class="btn btn-primary" onclick="agregarDetalle(' . $reg->idProducto . ', \'' . $reg->categoria.' '. $reg->descripcion . '\',\'' . $reg->precio . '\',\'' . $reg->stock . '\')"><span class="fa fa-shopping-cart"></span> Agregar</button>': '<span style="color: red">Sin Stock</span>',
-                "1" => $reg->categoria.' '.$reg->descripcion,
+                "0" => $reg->stock > 0 ? '<button class="btn btn-primary" onclick="agregarDetalle(' . $reg->idProducto . ', \'' . $reg->categoria . ' ' . $reg->descripcion . '\',\'' . $reg->precio . '\',\'' . $reg->stock . '\')"><span class="fa fa-shopping-cart"></span> Agregar</button>' : '<span style="color: red">Sin Stock</span>',
+                "1" => $reg->categoria . ' ' . $reg->descripcion,
                 "2" => $reg->stock,
                 "3" => $reg->precio,
                 "4" => $reg->codigo
