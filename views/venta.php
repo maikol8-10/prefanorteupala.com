@@ -289,6 +289,7 @@ if (!isset($_SESSION["nombre"])) {
     ?>
     <script type="text/javascript" src="scripts/venta.js"></script>
     <script type="text/javascript" src="scripts/saldoEfectivo.js"></script>
+    <script type="text/javascript" src="scripts/PDFCombrobante.js"></script>
     <?php
 }
 ob_end_flush();

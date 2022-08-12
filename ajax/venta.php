@@ -122,7 +122,7 @@ switch ($_GET["op"]) {
                 "0" => (($reg->estado == 'Aceptado') ? '<button class="btn btn-primary" onclick="mostrar(' . $reg->idVenta . ')"><i class="fa fa-eye"></i></button>' .
                         ' <button class="btn btn-warning" onclick="anular(' . $reg->idVenta . ')"><i class="fa fa-close"></i></button>' :
                         '<button class="btn btn-primary" onclick="mostrar(' . $reg->idVenta . ')"><i class="fa fa-eye"></i></button>') .
-                    ' <a target="_blank" href="' . $url . $reg->idVenta . '"><button class="btn btn-bitbucket"><i class="fa fa-print"></i></button></a>',
+                    ' <a target="_blank" href="' . $url . $reg->idVenta . '"><button class="btn btn-bitbucket"><i class="fa fa-print"></i></button></a><button style="background-color: #00a65a !important; border-color: #00a65a !important; margin-left: .3rem" class="btn btn-warning" onclick="generarPDF(' . $reg->idVenta . ')"><i class="fa fa-file-pdf-o"></i></button>',
                 "1" => $reg->numeroComprobante,
                 "2" => $reg->fecha,
                 "3" => $reg->cliente,
@@ -249,5 +249,22 @@ switch ($_GET["op"]) {
         //Codificar el resultado utilizando json
         echo json_encode($rspta);
         break;
+
+    case 'getVenta':
+        $respuesta = $venta->ventaCabeceraFactura($idVenta);
+        //Codificar el resultado utilizando json
+        echo json_encode($respuesta);
+        break;
+
+    case 'getDetalleVenta':
+        $respuesta = $venta->listarDetalle($idVenta);
+        //Codificar el resultado utilizando json
+        $data = array();
+        while ($reg = $respuesta->fetch_object()) {
+            array_push($data, $reg);
+        }
+        $results = array(
+            "data" => $data);
+        echo json_encode($results);
 }
 ?>

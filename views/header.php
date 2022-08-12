@@ -41,6 +41,9 @@
     <script src="../public/datatables/js/jszip.min.js"></script>
     <script src="../public/datatables/js/pdfmake.min.js"></script>
     <script src="../public/datatables/js/vfs_fonts.js"></script>
+    <!--JSPDF-->
+    <script src="../public/js/plugins/jsPDF/jspdf.min.js"></script>
+    <script src="../public/js/plugins/jsPDFAutotable/jspdf.plugin.autotable.min.js"></script>
     <!--crypto
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/aes.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9/sha256.js"></script>-->

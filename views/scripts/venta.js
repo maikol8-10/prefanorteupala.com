@@ -373,10 +373,10 @@ const modificarSubTotales = () => {
         //IVA TOTAL
         ivaTotalFinal += ivaTotal;
         $("#montoIva").html("₡ " + decimalSeparator(ivaTotalFinal));
-        $("#totalIvaFinal").val(ivaTotalFinal);
+        $("#totalIvaFinal").val(myRound(ivaTotalFinal, 2));
 
         $("#subTotalV").html("₡ " + decimalSeparator(subtotalFinal));
-        $("#subtotalVenta").val(subtotalFinal);
+        $("#subtotalVenta").val(myRound(subtotalFinal, 2));
 
         if (inpS.value !== undefined) {
             document.getElementsByName("subtotal")[i].innerHTML = '₡' + myRound(inpS.value, 2);

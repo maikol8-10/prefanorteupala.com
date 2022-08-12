@@ -27,11 +27,11 @@ if (!isset($_SESSION["nombre"])) {
         $reg = $rspta->fetch_object();
 
         //Establecemos los datos de la empresa
-        $empresa = "Steph Boutique Americana";
-        $documento = "Stephanny Mora Tijerino- Ced. 504050124";
-        $direccion = "Upala, Frente a Auto Respuesto Chambero";
-        $telefono = "+506 71571294";
-        $email = "example@hotmail.com";
+        $empresa = "PREFA NORTE UPALA";
+        $documento = "Miguel Mora Alvarez - Ced. 204040153";
+        $direccion = "100 Oeste del cementerio de San Fernando de Upala";
+        $telefono = "+506 2470 1818";
+        $email = "prefanortefactura@gmail.com ";
 
         ?>
         <div class="zona_impresion">
@@ -39,7 +39,7 @@ if (!isset($_SESSION["nombre"])) {
             <br>
             <table border="0" align="center" width="260px">
                 <tr>
-                    <td style="display: flex; flex-direction: column;">
+                    <td style="display: flex; flex-direction: column; text-align: center">
                         &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<?php echo $empresa; ?>
                         <!-- Mostramos los datos de la empresa en el documento HTML -->
                         <!--.::<strong> <?php echo $empresa; ?></strong>::.<br>-->
@@ -109,7 +109,7 @@ if (!isset($_SESSION["nombre"])) {
                     $descuentoColones = substr($regd->descuentoColones, 0, -5);
                     echo "<tr>";
                     echo "<td>" . $regd->cantidad . "&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</td>";
-                    echo "<td>" . $regd->prenda . "&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</td>";
+                    echo "<td>" . $regd->categoria . ' ' . $regd->descripcion . "&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</td>";
                     echo "<td align='right'> " . ($regd->precioVenta * $regd->cantidad - $descuentoColones) . "</td>";
                     echo "</tr>";
                     $cantidad += $regd->cantidad;
@@ -138,6 +138,11 @@ if (!isset($_SESSION["nombre"])) {
                     <td>&nbsp;</td>
                     <td align="right">Descuento:</td>
                     <td align="right"> <?php echo $descuentoTotal; ?></td>
+                </tr>
+                <tr style="display: flex; justify-content: flex-end;">
+                    <td>&nbsp;</td>
+                    <td align="right">IVA:</td>
+                    <td align="right"> <?php echo $reg->iva; ?></td>
                 </tr>
                 <tr style="display: flex; justify-content: flex-end;">
                     <td>&nbsp;</td>
