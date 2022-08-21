@@ -35,9 +35,14 @@ function limpiar() {
     // $("#serie_comprobante").val("");
     $("#numeroComprobante").val("");
     //$("#impuesto").val("0");
-    $("#totalVenta").val("");
+    $("#totalVenta").val(0);
+    $("#subtotalVenta").val(0);
+    $("#totalDescuento").val(0);
+    $("#descuentoInput").val(0);
+    //$("#iva").val("");
+    $("#totalTransporte").val(0);
     $(".filas").remove();
-    $("#total").html("0");
+    //$("#total").html("0");
 
     //Obtenemos la fecha actual
     let now = new Date();
@@ -84,9 +89,7 @@ function resetForm() {
     $("#btnGuardar").hide();
     $("#btnCancelar").show();
     $("#btnAgregarArt").show();
-    $("#vuelto").text('₡0');
-    $("#subTotalV").text('₡0');
-    $("#montoIva").text('₡0');
+
     $("#tipoPago").val("SinpeMovil");
     $("#tipoPago").selectpicker('refresh');
     flagEfectivo = false;
@@ -94,8 +97,21 @@ function resetForm() {
     $("#tr-vuelto").hide();
     $("#formularioregistros").show();
     detalles = 0;
+
+    //Reset totales && Inputs
+
+    $("#vuelto").text('₡0');
+    $("#subTotalV").text('₡0');
+    $("#ivaLabel").text('₡0');
+    $("#descuentoLabel").text('₡0');
+    $("#totalLabel").text('₡0');
+    $("#subtotalLabel").text('₡0');
+
     $("#tr-subtotal").attr("hidden", false);
-    $("#tr-iva").attr("hidden", false);
+    $("#tr-iva-input").attr("hidden", false);
+    $("#tr-descuento-input").attr("hidden", false);
+    $("#tr-transporte-input").attr("hidden", false);
+
 }
 
 /**
@@ -311,8 +327,7 @@ function renderDetalles() {
         '                                    <th>Producto</th>\n' +
         '                                    <th>Cantidad</th>\n' +
         '                                    <th>Precio Unitario</th>\n' +
-        '                                    <th>IVA %</th>\n' +
-        '                                    <th>Descuento %</th>\n' +
+        //'                                    <th>Descuento %</th>\n' +
         '                                    <th>Subtotal</th>\n' +
         '                                </thead>'
     $('#detalles thead').remove();
@@ -323,9 +338,9 @@ function renderDetalles() {
             '<td><button type="button" class="btn btn-danger" onclick="eliminarDetalle(' + cont + ', ' + prenda + ')"><i class="fa fa-trash"></i> Eliminar</button></td>' +
             '<td><input type="hidden" name="idProducto[]" min="1" max="999999" value="' + productos[prenda].id + '">' + productos[prenda].descripcion + '</td>' +
             '<td><input id="cantidad-' + productos[prenda].id + '" type="number" class="form-control" min="0" max="999999" onchange="validarStock(' + productos[prenda].id + ')" name="cantidad[]" id="cantidad[]" value="' + productos[prenda].cantidad + '"></td>' +
-            '<td><input type="number" class="form-control" min="0" max="999999" onchange="modificarSubTotales()"  name="precioVenta[]" id="precioVenta[]" value="' + productos[prenda].precio + '"></td>' +
-            '<td><input type="number" class="form-control" min="0" max="999999" onchange="modificarSubTotales()"   name="iva[]" id="iva[]" value="' + iva + '"></td>' +
-            '<td><input type="number" class="form-control" min="0" max="999999" onchange="modificarSubTotales()" name="descuento[]" value="' + descuento + '"></td>' +
+            '<td><input type="number" class="form-control" min="0" max="999999" onchange="modificarSubTotales()" onkeypress="modificarSubTotales()"  name="precioVenta[]" id="precioVenta[]" value="' + productos[prenda].precio + '"></td>' +
+            //'<td><input type="number" class="form-control" min="0" max="999999" onchange="modificarSubTotales()"   name="iva[]" id="iva[]" value="' + iva + '"></td>' +
+            //'<td><input type="number" class="form-control" min="0" max="999999" onchange="modificarSubTotales()" onkeypress="modificarSubTotales()" name="descuento[]" value="' + descuento + '"></td>' +
             '<td><span name="subtotal" id="subtotal' + cont + '">' + '₡' + subtotal + '</span></td>' +
             '</tr>';
         cont++;
@@ -338,7 +353,7 @@ function renderDetalles() {
 
 function validarStock(idProducto) {
     let producto = productos.filter(({id}) => id === idProducto);
-    if (parseInt(producto[0].stock) <= parseInt($("#cantidad-" + idProducto).val())) {
+    if (parseInt($("#cantidad-" + idProducto).val()) > parseInt(producto[0].stock)) {
         Swal.fire({
             icon: 'error',
             title: 'Sin Stock disponible para el producto',
@@ -348,8 +363,8 @@ function validarStock(idProducto) {
         $("#btnGuardar").hide()
     } else {
         $("#btnGuardar").show()
+        modificarSubTotales();
     }
-    modificarSubTotales();
 }
 
 /**
@@ -358,42 +373,36 @@ function validarStock(idProducto) {
 const modificarSubTotales = () => {
     let cant = document.getElementsByName("cantidad[]");
     let prec = document.getElementsByName("precioVenta[]");
-    let iva = document.getElementsByName("iva[]");
-    let desc = document.getElementsByName("descuento[]");
+    //let iva = document.getElementsByName("iva[]");
+    //let desc = document.getElementsByName("descuento[]");
     let sub = document.getElementsByName("subtotal");
-    let descuentoTotal, ivaTotal, subtotalFinal = 0, ivaTotalFinal = 0;
+    let descuentoTotal, subtotalFinal = 0;
 
     for (let i = 0; i < cant.length; i++) {
         let inpC = cant[i];
         let inpP = prec[i];
-        let inpD = desc[i];
-        let inpIva = iva[i];
+        //let inpD = desc[i];
+        //let inpIva = iva[i];
         let inpS = sub[i];
-        descuentoTotal = ((inpC.value * inpP.value) * (inpD.value / 100));
-        ivaTotal = ((inpC.value * inpP.value) * (inpIva.value / 100))
+        //descuentoTotal = ((inpC.value * inpP.value) * (inpD.value / 100));
+        //ivaTotal = ((inpC.value * inpP.value) * (inpIva.value / 100))
         //inpIva.value = ((inpC.value * inpP.value) * 0.13);
 
         //Monto sin IVA
-        subtotalFinal += (inpC.value * inpP.value) - descuentoTotal;
+        //subtotalFinal += (inpC.value * inpP.value) - descuentoTotal;
+        subtotalFinal += (inpC.value * inpP.value);
 
         //Monto con IVA
-        inpS.value = (inpC.value * inpP.value) - descuentoTotal + ivaTotal;
+        inpS.value = (inpC.value * inpP.value);
 
-        //IVA TOTAL
-        ivaTotalFinal += ivaTotal;
-        $("#montoIva").html("₡ " + decimalSeparator(ivaTotalFinal));
-        $("#totalIvaFinal").val(myRound(ivaTotalFinal, 2));
-
-        $("#subTotalV").html("₡ " + decimalSeparator(subtotalFinal));
+        $("#subtotalLabel").html("₡ " + decimalSeparator(subtotalFinal));
         $("#subtotalVenta").val(myRound(subtotalFinal, 2));
 
         if (inpS.value !== undefined) {
             document.getElementsByName("subtotal")[i].innerHTML = '₡' + myRound(inpS.value, 2);
         }
-        /*if (subtotalFinal !== undefined) {
-            document.getElementsByName("iva")[i].innerHTML = inpIva.value;
-        }*/
     }
+    //$("#descuentoLabel").html("₡ " + decimalSeparator(descuentoTotal.toFixed(2)));
     calcularTotales();
 }
 
@@ -403,20 +412,32 @@ const modificarSubTotales = () => {
 const calcularTotales = () => {
     let sub = document.getElementsByName("subtotal");
     let totalTransporte = $("#totalTransporte").val();
+    let ivaInput = $("#ivaInput").val();
     let subtotalVenta = 0.0;
     for (let i = 0; i < sub.length; i++) {
         subtotalVenta += document.getElementsByName("subtotal")[i].value;
     }
-    if (flagApartado) {
-        $("#total").html("₡ " + decimalSeparator(total / 2));
-        $("#totalVenta").val(total / 2);
-        vuelto = $("#pagoCliente").val() - total / 2;
 
-    } else {
-        vuelto = $("#pagoCliente").val() - subtotalVenta;
-        $("#total").html("₡ " + decimalSeparator(subtotalVenta + myRound(totalTransporte, 2)));
-        $("#totalVenta").val(subtotalVenta + myRound(totalTransporte, 2));
-    }
+
+    //Se calcula el descuento
+    let descuentoInput = $("#descuentoInput").val();
+    let totalDescuento = ((myRound(subtotalVenta, 2)) * (parseInt(descuentoInput) / 100))
+    $("#totalDescuento").val(totalDescuento.toFixed(2));
+    $("#descuentoLabel").html("₡ " + decimalSeparator(totalDescuento.toFixed(2)));
+
+
+    //Se calcula el IVA de la venta
+    let totalIvaFinal = ((myRound(subtotalVenta, 2) + myRound(totalTransporte, 2) - totalDescuento) * (parseInt(ivaInput) / 100))
+    $("#totalIvaFinal").val(totalIvaFinal.toFixed(2));
+    $("#ivaLabel").html("₡ " + decimalSeparator(totalIvaFinal.toFixed(2)));
+
+    totalFinal = (((subtotalVenta + myRound(totalTransporte, 2) + totalIvaFinal) - totalDescuento)).toFixed(2);
+    let pagoCliente = $("#pagoCliente").val();
+    vuelto = parseFloat(pagoCliente) - totalFinal;
+    $("#totalLabel").html("₡ " + decimalSeparator(totalFinal));
+    $("#totalVenta").val(totalFinal);
+
+
     if (flagEfectivo) {
         $("#vuelto").html("₡ " + decimalSeparator(vuelto));
         $("#vueltoCliente").val(vuelto);
@@ -424,7 +445,7 @@ const calcularTotales = () => {
         $("#vueltoCliente").val(0);
         $("#pagoCliente").val(0);
     }
-    totalFinal = subtotalVenta;
+
     evaluar();
     validarVentaEfectivo();
 }
@@ -432,6 +453,7 @@ const calcularTotales = () => {
 $("#totalTransporte").keypress(function () {
     calcularTotales();
 });
+
 
 /**
  * Permite envaluar si existen lineas en el detalle

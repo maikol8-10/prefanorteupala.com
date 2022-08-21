@@ -103,17 +103,18 @@ if (!isset($_SESSION["nombre"])) {
                 <?php
                 $rsptad = $venta->ventaDetalle($_GET["id"]);
                 $cantidad = 0;
-                $descuentoTotal = 0;
+                //$descuentoTotal = 0;
                 $subtotal = 0;
                 while ($regd = $rsptad->fetch_object()) {
-                    $descuentoColones = substr($regd->descuentoColones, 0, -5);
+                    //$descuentoColones = substr($regd->descuentoColones, 0, -5);
                     echo "<tr>";
                     echo "<td>" . $regd->cantidad . "&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</td>";
                     echo "<td>" . $regd->categoria . ' ' . $regd->descripcion . "&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</td>";
-                    echo "<td align='right'> " . ($regd->precioVenta * $regd->cantidad - $descuentoColones) . "</td>";
+                    //echo "<td align='right'> " . ($regd->precioVenta * $regd->cantidad - $descuentoColones) . "</td>";
+                    echo "<td align='right'> " . ($regd->precioVenta * $regd->cantidad) . "</td>";
                     echo "</tr>";
                     $cantidad += $regd->cantidad;
-                    $descuentoTotal += $regd->descuentoColones;
+                    //$descuentoTotal += $regd->descuentoColones;
                     $subtotal += $regd->precioVenta * $regd->cantidad;
                 }
                 ?>
@@ -136,36 +137,39 @@ if (!isset($_SESSION["nombre"])) {
                 </tr>
                 <tr style="display: flex; justify-content: flex-end;">
                     <td>&nbsp;</td>
-                    <td align="right">IVA:</td>
-                    <td align="right"> <?php echo $reg->iva; ?></td>
+                    <td align="right">Descuento:</td>
+                    <td align="right"> <?php echo $reg->totalDescuento; ?></td>
                 </tr>
                 <tr style="display: flex; justify-content: flex-end;">
                     <td>&nbsp;</td>
-                    <td align="right">Descuento:</td>
-                    <td align="right"> <?php echo $descuentoTotal; ?></td>
+                    <td align="right">IVA:</td>
+                    <td align="right"> <?php echo $reg->iva; ?></td>
                 </tr>
+                
                 <tr style="display: flex; justify-content: flex-end;">
                     <td>&nbsp;</td>
                     <td align="right">Transporte:</td>
                     <td align="right"> <?php echo $reg->totalTransporte; ?></td>
                 </tr>
-                <tr style="display: flex; justify-content: flex-end;">
-                    <td>&nbsp;</td>
-                    <td align="right"><b>TOTAL:</b></td>
-                    <td align="right"><b> <?php echo $reg->totalVenta; ?></b></td>
-                </tr>
+
                 <?php if ($reg->tipoPago === 'Efectivo') { ?>
                     <tr style="display: flex; justify-content: flex-end;">
                         <td>&nbsp;</td>
                         <td align="right">Pago:</td>
                         <td align="right"> <?php echo $reg->pagoCliente; ?></td>
                     </tr>
-                    <tr style="display: flex; justify-content: flex-end;">
+                    <!--<tr style="display: flex; justify-content: flex-end;">
                         <td>&nbsp;</td>
                         <td align="right">Vuelto:</td>
                         <td align="right"> <?php echo $reg->vueltoCliente; ?></td>
-                    </tr>
+                    </tr>-->
                 <?php } ?>
+
+                <tr style="display: flex; justify-content: flex-end;">
+                    <td>&nbsp;</td>
+                    <td align="right"><b>TOTAL:</b></td>
+                    <td align="right"><b> <?php echo $reg->totalVenta; ?></b></td>
+                </tr>
 
 
                 <tr>

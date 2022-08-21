@@ -11,6 +11,7 @@ define("DB_NAME", "u888592833_prefanorte");
 define("DB_USERNAME", "u888592833_prefanorte");
 
 //Contraseña del usuario de base de datos
+//define("DB_PASSWORD", "");
 define("DB_PASSWORD", "O2~fELJ2lw|");
 
 //Definicion de codificación de los caracteres

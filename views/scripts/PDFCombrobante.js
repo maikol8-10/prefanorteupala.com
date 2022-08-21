@@ -702,8 +702,8 @@ const generarPDF = async (idVenta) => {
         data = JSON.parse(data);
         detalleVenta = data;
     });
-    let descuentoTotal = 0;
-    descuentoTotal += detalleVenta.data.map(item => myRound(item.descuentoColones, 2)).reduce((prev, curr) => prev + curr, 0);
+    //let descuentoTotal = 0;
+    //descuentoTotal += detalleVenta.data.map(item => myRound(item.descuentoColones, 2)).reduce((prev, curr) => prev + curr, 0);
 
     const OutputType = {
         Save: "save", //save pdf as a file
@@ -715,6 +715,7 @@ const generarPDF = async (idVenta) => {
     };
 
     console.log(venta);
+    const subTotal = detalleVenta.data.map(item => myRound(item.cantidad, 2) * myRound(item.precioVenta, 2)).reduce((prev, curr) => prev + curr, 0);
     let props = {
         outputType: OutputType.Save,
         returnJsPDFDocObject: true,
@@ -804,13 +805,21 @@ const generarPDF = async (idVenta) => {
                 item.descripcion,
                 item.precioVenta,
                 item.cantidad,
-                parseInt(item.cantidad) * myRound(item.precioVenta, 2),
+                decimalSeparator(parseInt(item.cantidad) * myRound(item.precioVenta, 2)),
             ]),
 
             additionalRows: [
                 {
+                    col1: 'Moneda:',
+                    col2: 'CRC',
+                    col3: '',
+                    style: {
+                        fontSize: 10 //optional, default 12
+                    }
+                },
+                {
                     col1: 'SubTotal:',
-                    col2: (myRound(venta.totalVenta, 2) - myRound(venta.iva, 2)).toString(),
+                    col2: decimalSeparator(subTotal).toString(),
                     col3: '',
                     style: {
                         fontSize: 10 //optional, default 12
@@ -826,7 +835,7 @@ const generarPDF = async (idVenta) => {
                 },
                 {
                     col1: 'Descuento:',
-                    col2: myRound(descuentoTotal, 2).toString(),
+                    col2: decimalSeparator(venta.totalDescuento).toString(),
                     col3: '',
                     style: {
                         fontSize: 10 //optional, default 12
@@ -834,7 +843,7 @@ const generarPDF = async (idVenta) => {
                 },
                 {
                     col1: 'Transporte:',
-                    col2: myRound(venta.totalTransporte, 2).toString(),
+                    col2: decimalSeparator(venta.totalTransporte).toString(),
                     col3: '',
                     style: {
                         fontSize: 10 //optional, default 12
@@ -842,18 +851,10 @@ const generarPDF = async (idVenta) => {
                 },
                 {
                     col1: 'Total:',
-                    col2: myRound(venta.totalVenta, 2).toString(),
+                    col2: decimalSeparator(venta.totalVenta).toString(),
                     col3: '',
                     style: {
                         fontSize: 14 //optional, default 12
-                    }
-                },
-                {
-                    col1: 'Moneda:',
-                    col2: 'CRC',
-                    col3: '',
-                    style: {
-                        fontSize: 10 //optional, default 12
                     }
                 }],
             //invDescLabel: "Invoice Note",

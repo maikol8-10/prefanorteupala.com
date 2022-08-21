@@ -126,14 +126,11 @@ if (!isset($_SESSION["nombre"])) {
                                             <th>Producto</th>
                                             <th>Cantidad</th>
                                             <th>Precio Unitario</th>
-                                            <th>IVA %</th>
-                                            <th>Descuento %</th>
+                                            <!--<th>Descuento %</th>-->
                                             <th>Subtotal</th>
                                             </thead>
                                             <tfoot>
-                                            <tr>
-                                                <th></th>
-                                                <th></th>
+                                            <tr id="tr-subtotal-label">
                                                 <th></th>
                                                 <th></th>
                                                 <th></th>
@@ -142,23 +139,72 @@ if (!isset($_SESSION["nombre"])) {
                                                     SUBTOTAL
                                                 </th>
                                                 <th style="width: 115px; !important;"><h4 style="margin: 0;"
-                                                                                          id="subTotalV">₡ 0.00</h4>
+                                                                                          id="subtotalLabel">₡ 0.00</h4>
                                                     <input
                                                             type="hidden" name="subtotalVenta"
                                                             id="subtotalVenta"></th>
                                             </tr>
-                                            <tr>
+
+                                            <tr id="tr-descuento-input">
                                                 <th></th>
                                                 <th></th>
+                                                <th></th>
+                                                <th style="text-align: end; !important; vertical-align: middle; !important;">
+                                                    DESCUENTO %
+                                                </th>
+                                                <th style="width: 115px; !important;"><input type="number"
+                                                                                             onchange="modificarSubTotales()"
+                                                                                             onkeyup="modificarSubTotales()"
+                                                                                             value="0"
+                                                                                             name="descuentoInput"
+                                                                                             id="descuentoInput"
+                                                                                             class="form-control"
+                                                                                             min="0" max="100"></th>
+                                            </tr>
+
+                                            <tr id="tr-descuento-label">
+                                                <th></th>
+                                                <th></th>
+                                                <th></th>
+                                                <th id="th-descuento-label"
+                                                    style="text-align: end; vertical-align: middle; !important;">
+                                                    TOTAL DESCUENTO
+                                                </th>
+                                                <th style="width: 115px; !important;"><h4 style="margin: 0;"
+                                                                                          id="descuentoLabel">₡
+                                                        0.00</h4>
+                                                    <input
+                                                            type="hidden" name="totalDescuento"
+                                                            id="totalDescuento"></th>
+                                                </th>
+                                            </tr>
+
+                                            <tr id="tr-iva-input">
+                                                <th></th>
+                                                <th></th>
+                                                <th></th>
+                                                <th style="text-align: end; !important; vertical-align: middle; !important;">
+                                                    IVA %
+                                                </th>
+                                                <th style="width: 115px; !important;"><input type="number"
+                                                                                             onchange="modificarSubTotales()"
+                                                                                             onkeyup="modificarSubTotales()"
+                                                                                             value="13"
+                                                                                             name="ivaInput"
+                                                                                             id="ivaInput"
+                                                                                             class="form-control"
+                                                                                             min="0" max="13"></th>
+                                            </tr>
+                                            <tr id="tr-iva-label">
                                                 <th></th>
                                                 <th></th>
                                                 <th></th>
                                                 <th id="thTotalIva"
                                                     style="text-align: end; vertical-align: middle; !important;">
-                                                    IVA
+                                                    TOTAL IVA
                                                 </th>
                                                 <th style="width: 115px; !important;"><h4 style="margin: 0;"
-                                                                                          id="montoIva">₡ 0.00</h4>
+                                                                                          id="ivaLabel">₡ 0.00</h4>
                                                     <input
                                                             type="hidden" name="totalIvaFinal"
                                                             id="totalIvaFinal"></th>
@@ -166,8 +212,6 @@ if (!isset($_SESSION["nombre"])) {
 
 
                                             <tr id="tr-pago" hidden>
-                                                <th></th>
-                                                <th></th>
                                                 <th></th>
                                                 <th></th>
                                                 <th></th>
@@ -185,8 +229,6 @@ if (!isset($_SESSION["nombre"])) {
                                                 <th></th>
                                                 <th></th>
                                                 <th></th>
-                                                <th></th>
-                                                <th></th>
                                                 <th style="text-align: end; !important; vertical-align: middle; !important;">
                                                     VUELTO
                                                 </th>
@@ -197,9 +239,7 @@ if (!isset($_SESSION["nombre"])) {
                                                             class="form-control" min="0" max="999999"></th>
                                             </tr>
 
-                                            <tr id="tr-transporte">
-                                                <th></th>
-                                                <th></th>
+                                            <tr id="tr-transporte-input">
                                                 <th></th>
                                                 <th></th>
                                                 <th></th>
@@ -220,13 +260,12 @@ if (!isset($_SESSION["nombre"])) {
                                                 <th></th>
                                                 <th></th>
                                                 <th></th>
-                                                <th></th>
-                                                <th></th>
                                                 <th id="thTotal"
-                                                    style="text-align: end; vertical-align: middle; !important;">
+                                                    style="color: #ff3f06; text-align: end; vertical-align: middle; !important;">
                                                     TOTAL
                                                 </th>
-                                                <th style="width: 115px; !important;"><h4 style="margin: 0;" id="total">
+                                                <th style="width: 115px; !important;"><h4
+                                                            style="margin: 0; color: #ff3f06;" id="totalLabel">
                                                         ₡ 0.00</h4><input
                                                             type="hidden" name="totalVenta"
                                                             id="totalVenta"></th>

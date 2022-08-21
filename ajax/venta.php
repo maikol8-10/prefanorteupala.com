@@ -20,6 +20,7 @@ $numeroComprobante = isset($_POST["numeroComprobante"]) ? limpiarCadena($_POST["
 $fechaHora = isset($_POST["fechaHora"]) ? limpiarCadena($_POST["fechaHora"]) : "";
 $pagoCliente = isset($_POST["pagoCliente"]) ? limpiarCadena($_POST["pagoCliente"]) : "";
 $vueltoCliente = isset($_POST["vueltoCliente"]) ? limpiarCadena($_POST["vueltoCliente"]) : "";
+$totalDescuento = isset($_POST["totalDescuento"]) ? limpiarCadena($_POST["totalDescuento"]) : "";
 $totalVenta = isset($_POST["totalVenta"]) ? limpiarCadena($_POST["totalVenta"]) : "";
 $totalTransporte = isset($_POST["totalTransporte"]) ? limpiarCadena($_POST["totalTransporte"]) : "";
 $iva = isset($_POST["totalIvaFinal"]) ? limpiarCadena($_POST["totalIvaFinal"]) : "";
@@ -28,7 +29,7 @@ switch ($_GET["op"]) {
     case 'guardaryeditar':
         if (empty($idVenta)) {
 
-            $rspta = $venta->insertar($idCliente, $idUsuario, $tipoPago, $tipoComprobante, $numeroComprobante, $fechaHora, $pagoCliente, $vueltoCliente, $totalVenta, $iva,$totalTransporte, $_POST["idProducto"], $_POST["cantidad"], $_POST["precioVenta"], $_POST["descuento"]);
+            $rspta = $venta->insertar($idCliente, $idUsuario, $tipoPago, $tipoComprobante, $numeroComprobante, $fechaHora, $pagoCliente, $vueltoCliente, $totalDescuento, $totalVenta, $iva, $totalTransporte, $_POST["idProducto"], $_POST["cantidad"], $_POST["precioVenta"]);
             /*foreach ($_POST["cantidad"] as $value) {
                           echo $value, "\n";
                       }*/
@@ -60,51 +61,104 @@ switch ($_GET["op"]) {
         //Recibimos el idingreso
         $id = $_GET['id'];
         $rspta = $venta->listarDetalle($id);
+
+        $rsptaCabecera = $venta->ventaCabecera($_GET["id"]);
+        //Recorremos todos los valores obtenidos
+        $regCabecera = $rsptaCabecera->fetch_object();
+
         $total = 0;
         echo '<thead style="background-color:#ff3f06; color: #ffffff">
                                     <th>Opciones</th>
                                     <th>Producto</th>
                                     <th>Cantidad</th>
                                     <th>Precio Unitario</th>
-                                    <th>Descuento %</th>
+                                    <!--<th>Descuento %</th>-->
                                     <th>Subtotal</th>
                                 </thead>';
 
         while ($reg = $rspta->fetch_object()) {
-            $descuentoColones = substr($reg->descuentoColones, 0, -5);
-            echo '<tr class="filas"><td></td><td>' . $reg->categoria . ' ' . $reg->descripcion . '</td><td>' . $reg->cantidad . '</td><td>' . '₡' . $reg->precioVenta . '</td><td>' . $reg->descuento . '%' . '</td><td>' . '₡' . ($reg->precioVenta * $reg->cantidad - $descuentoColones) . '</td></tr>';
-            $total = $total + ($reg->precioVenta * $reg->cantidad - $descuentoColones);
+            //$descuentoColones = substr($reg->descuentoColones, 0, -5);
+            echo '<tr class="filas"><td></td><td>' . $reg->categoria . ' ' . $reg->descripcion . '</td><td>' . $reg->cantidad . '</td><td>' . '₡' . $reg->precioVenta . '</td><td>' . '₡' . ($reg->precioVenta * $reg->cantidad) . '</td></tr>';
+            $total = $total + ($reg->precioVenta * $reg->cantidad);
         }
         echo '<tfoot>
-               <tr id="tr-subtotal" hidden>
-                    <th></th>
+               <tr id="tr-subtotal">
                     <th></th>
                     <th></th>
                     <th></th>
                     <th style="text-align: end; !important; vertical-align: middle; !important;">SUBTOTAL</th>
-                    <th><h4 id="total">₡ 0</h4><input type="hidden" name="subTotalV" id="subTotalV"></th>
+                    <th><h4 id="subtotalLabel">₡' . $total . '</h4><input type="hidden" name="subtotalVenta"></th>
               </tr> 
               
-              <tr id="tr-iva" hidden>
-                    <th></th>
-                    <th></th>
-                    <th></th>
-                    <th></th>
-                    <th style="text-align: end; !important; vertical-align: middle; !important;">IVA</th>
-                    <th><h4 id="total">₡ 0</h4><input type="hidden" name="totalIvaFinal" id="totalIvaFinal"></th>
-              </tr>
+              <tr id="tr-descuento-input" hidden>
+                                                <th></th>
+                                                <th></th>
+                                                <th></th>
+                                                <th style="text-align: end; !important; vertical-align: middle; !important;">
+                                                    DESCUENTO %
+                                                </th>
+                                                <th style="width: 115px; !important;"><input type="number"
+                                                                                             onchange="modificarSubTotales()"
+                                                                                             onkeyup="modificarSubTotales()"
+                                                                                             value="0"
+                                                                                             name="descuentoInput"
+                                                                                             id="descuentoInput"
+                                                                                             class="form-control"
+                                                                                             min="0" max="100"></th>
+                                            </tr>
+                                            
+                                            <tr id="tr-descuento-label">
+                                                <th></th>
+                                                <th></th>
+                                                <th></th>
+                                                <th id="th-descuento-label"
+                                                    style="text-align: end; vertical-align: middle; !important;">
+                                                    TOTAL DESCUENTO
+                                                </th>
+                                                <th style="width: 115px; !important;"><h4 style="margin: 0;"
+                                                                                          id="descuentoLabel">₡
+                                                        ' . $regCabecera->totalDescuento . '</h4>
+                                                    <input
+                                                            type="hidden" name="totalDescuento"
+                                                            id="totalDescuento"></th>
+                                                </th>
+                                            </tr>
+                                            
+                                            <tr id="tr-iva-input" hidden>
+                                                <th></th>
+                                                <th></th>
+                                                <th></th>
+                                                <th style="text-align: end; !important; vertical-align: middle; !important;">
+                                                    IVA %
+                                                </th>
+                                                <th style="width: 115px; !important;"><input type="number"
+                                                                                             onchange="modificarSubTotales()"
+                                                                                             onkeyup="modificarSubTotales()"
+                                                                                             value="13"
+                                                                                             name="ivaInput"
+                                                                                             id="ivaInput"
+                                                                                             class="form-control"
+                                                                                             min="0" max="13"></th>
+                                            </tr>
+                                            
+                                            
               
-              <tr >
-                    <th></th>
-                    <th></th>
-                    <th></th>
-                    <th></th>
-                    <th style="text-align: end; !important; vertical-align: middle; !important;">TOTAL</th>
-                    <th><h4 id="total">₡' . $total . '</h4><input type="hidden" name="totalVenta" id="totalVenta"></th>
-              </tr> 
+              <tr id="tr-iva-label">
+                                                <th></th>
+                                                <th></th>
+                                                <th></th>
+                                                <th id="thTotalIva"
+                                                    style="text-align: end; vertical-align: middle; !important;">
+                                                    TOTAL IVA
+                                                </th>
+                                                <th style="width: 115px; !important;"><h4 style="margin: 0;"
+                                                                                          id="ivaLabel">₡' . $regCabecera->iva . '</h4>
+                                                    <input
+                                                            type="hidden" name="totalIvaFinal"
+                                                            id="totalIvaFinal"></th>
+                                            </tr>
               
               <tr id="tr-pago" hidden>
-                    <th></th>
                     <th></th>
                     <th></th>
                     <th></th>
@@ -117,12 +171,43 @@ switch ($_GET["op"]) {
                     <th></th>
                     <th></th>
                     <th></th>
-                    <th></th>
                     <th style="text-align: end; !important; vertical-align: middle; !important;">VUELTO
                     </th>
                     <th style="width: 115px; !important;"><h4 id="vuelto">₡ 0</h4><input type="hidden"name="vueltoCliente"
                     id="vueltoCliente"class="form-control" min="0" max="999999"></th>
               </tr>
+              
+              <tr id="tr-transporte-input" hidden>
+                                                <th></th>
+                                                <th></th>
+                                                <th></th>
+                                                <th style="text-align: end; !important; vertical-align: middle; !important;">
+                                                    TRANSPORTE
+                                                </th>
+                                                <th style="width: 115px; !important;"><input type="number"
+                                                                                             onchange="modificarSubTotales()"
+                                                                                             onkeyup="modificarSubTotales()"
+                                                                                             value="0"
+                                                                                             name="totalTransporte"
+                                                                                             id="totalTransporte"
+                                                                                             class="form-control"
+                                                                                             min="0" max="999999"></th>
+                                            </tr>
+                                            
+                                            <tr>
+                                                <th></th>
+                                                <th></th>
+                                                <th></th>
+                                                <th id="thTotal"
+                                                    style="color: #ff3f06; text-align: end; vertical-align: middle; !important;">
+                                                    TOTAL
+                                                </th>
+                                                <th style="width: 115px; !important;"><h4
+                                                            style="margin: 0; color: #ff3f06;" id="totalLabel">
+                                                        ₡' . $regCabecera->totalVenta . '</h4><input
+                                                            type="hidden" name="totalVenta"
+                                                            id="totalVenta"></th>
+                                            </tr>
               </tfoot>';
         break;
 

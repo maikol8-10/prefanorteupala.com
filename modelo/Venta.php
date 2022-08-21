@@ -10,19 +10,19 @@ class Venta
     }
 
     //Implementamos un método para insertar registros
-    public function insertar($idCliente, $idUsuario, $tipoPago, $tipoComprobante, $numeroComprobante, $fechaHora, $pagoCliente, $vueltoCliente, $totalVenta, $iva, $totalTransporte, $idProducto, $cantidad, $precioVenta, $descuento)
+    public function insertar($idCliente, $idUsuario, $tipoPago, $tipoComprobante, $numeroComprobante, $fechaHora, $pagoCliente, $vueltoCliente, $totalDescuento, $totalVenta, $iva, $totalTransporte, $idProducto, $cantidad, $precioVenta)
     {
         date_default_timezone_set("America/Costa_Rica");
         $fecha = date('Y-m-d H:i:s');
         $estado = "Aceptado";
-        $sql = "INSERT INTO venta (idCliente,idUsuario,tipoPago,tipoComprobante,numeroComprobante,fechaHora,pagoCliente,vueltoCliente,totalVenta,iva,totalTransporte, estado)
-		VALUES ('$idCliente','$idUsuario','$tipoPago' ,'$tipoComprobante','$numeroComprobante','$fecha','$pagoCliente','$vueltoCliente','$totalVenta','$iva','$totalTransporte','$estado')";
+        $sql = "INSERT INTO venta (idCliente,idUsuario,tipoPago,tipoComprobante,numeroComprobante,fechaHora,pagoCliente,vueltoCliente, totalDescuento, totalVenta,iva,totalTransporte, estado)
+		VALUES ('$idCliente','$idUsuario','$tipoPago' ,'$tipoComprobante','$numeroComprobante','$fecha','$pagoCliente','$vueltoCliente','$totalDescuento','$totalVenta','$iva','$totalTransporte','$estado')";
         //return ejecutarConsulta($sql);
         $idVentaNew = ejecutarConsulta_retornarID($sql);
         $num_elementos = 0;
         $sw = true;
         while ($num_elementos < count($idProducto)) {
-            $sql_detalle = "INSERT INTO detalle_venta (idVenta, idProducto,cantidad,precioVenta,descuento) VALUES ('$idVentaNew', '$idProducto[$num_elementos]','$cantidad[$num_elementos]','$precioVenta[$num_elementos]','$descuento[$num_elementos]')";
+            $sql_detalle = "INSERT INTO detalle_venta (idVenta, idProducto,cantidad,precioVenta) VALUES ('$idVentaNew', '$idProducto[$num_elementos]','$cantidad[$num_elementos]','$precioVenta[$num_elementos]')";
             ejecutarConsulta($sql_detalle) or $sw = false;
             $num_elementos = $num_elementos + 1;
         }
@@ -104,7 +104,7 @@ class Venta
 
     public function listarDetalle($idVenta)
     {
-        $sql = "SELECT dv.idVenta,dv.idProducto, c.categoria, a.descripcion,dv.cantidad,dv.precioVenta,dv.descuento, ((dv.cantidad*dv.precioVenta)*(dv.descuento)/100) as descuentoColones FROM detalle_venta dv inner join producto  a on dv.idProducto=a.idProducto  inner join categoria  c on c.idCategoria=a.idCategoria where dv.idVenta='$idVenta'";
+        $sql = "SELECT dv.idVenta,dv.idProducto, c.categoria, a.descripcion,dv.cantidad,dv.precioVenta FROM detalle_venta dv inner join producto  a on dv.idProducto=a.idProducto  inner join categoria  c on c.idCategoria=a.idCategoria where dv.idVenta='$idVenta'";
         return ejecutarConsulta($sql);
     }
 
@@ -129,20 +129,20 @@ class Venta
 
     public function ventaCabeceraFactura($idVenta)
     {
-        $sql = "SELECT v.idVenta,v.idCliente,CONCAT(c.nombre,' ',c.apellido) as cliente,c.direccion,c.identificacion,c.telefono,v.idUsuario,v.totalTransporte,u.nombre as usuario,v.tipoComprobante,v.numeroComprobante,v.fechaHora as fecha,v.tipoPago,v.pagoCliente,v.vueltoCliente,v.totalVenta, v.iva FROM venta v INNER JOIN cliente c ON v.idCliente=c.idCliente INNER JOIN usuario u ON v.idUsuario=u.idUsuario WHERE v.idVenta='$idVenta'";
+        $sql = "SELECT v.idVenta,v.idCliente,CONCAT(c.nombre,' ',c.apellido) as cliente,c.direccion,c.identificacion,c.telefono,v.idUsuario,v.totalTransporte,u.nombre as usuario,v.tipoComprobante,v.numeroComprobante,v.fechaHora as fecha,v.tipoPago,v.pagoCliente,v.vueltoCliente, v.totalDescuento,v.totalVenta, v.iva FROM venta v INNER JOIN cliente c ON v.idCliente=c.idCliente INNER JOIN usuario u ON v.idUsuario=u.idUsuario WHERE v.idVenta='$idVenta'";
         //return ejecutarConsulta($sql);
         return ejecutarConsultaSimpleFila($sql);
     }
 
     public function ventaCabecera($idVenta)
     {
-        $sql = "SELECT v.idVenta,v.idCliente,CONCAT(c.nombre,' ',c.apellido) as cliente,c.direccion,c.identificacion,c.telefono,v.idUsuario, v.totalTransporte,u.nombre as usuario,v.tipoComprobante,v.numeroComprobante,date(v.fechaHora) as fecha,v.tipoPago,v.pagoCliente,v.vueltoCliente,v.totalVenta, v.iva FROM venta v INNER JOIN cliente c ON v.idCliente=c.idCliente INNER JOIN usuario u ON v.idUsuario=u.idUsuario WHERE v.idVenta='$idVenta'";
+        $sql = "SELECT v.idVenta,v.idCliente,CONCAT(c.nombre,' ',c.apellido) as cliente,c.direccion,c.identificacion,c.telefono,v.idUsuario, v.totalTransporte,u.nombre as usuario,v.tipoComprobante,v.numeroComprobante,date(v.fechaHora) as fecha,v.tipoPago,v.pagoCliente,v.vueltoCliente, v.totalDescuento, v.totalVenta, v.iva FROM venta v INNER JOIN cliente c ON v.idCliente=c.idCliente INNER JOIN usuario u ON v.idUsuario=u.idUsuario WHERE v.idVenta='$idVenta'";
         return ejecutarConsulta($sql);
     }
 
     public function ventaDetalle($idVenta)
     {
-        $sql = "SELECT c.categoria, p.descripcion ,p.codigo,d.cantidad,d.precioVenta,d.idProducto,d.descuento,((d.cantidad*d.precioVenta)*(d.descuento)/100) as descuentoColones FROM detalle_venta d 
+        $sql = "SELECT c.categoria, p.descripcion ,p.codigo,d.cantidad,d.precioVenta,d.idProducto FROM detalle_venta d 
 INNER JOIN producto  p ON d.idProducto=p.idProducto 
 INNER JOIN categoria  c ON p.idCategoria=c.idCategoria  WHERE d.idVenta='$idVenta'";
         return ejecutarConsulta($sql);
