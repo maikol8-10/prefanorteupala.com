@@ -132,7 +132,7 @@ if (!isset($_SESSION["nombre"])) {
                 </tr>
                 <tr style="display: flex; justify-content: flex-end;">
                     <td>&nbsp;</td>
-                    <td align="right">Subtotal:</td>
+                    <td align="right">Subtotal venta:</td>
                     <td align="right"> <?php echo $subtotal; ?></td>
                 </tr>
                 <tr style="display: flex; justify-content: flex-end;">
@@ -142,34 +142,38 @@ if (!isset($_SESSION["nombre"])) {
                 </tr>
                 <tr style="display: flex; justify-content: flex-end;">
                     <td>&nbsp;</td>
-                    <td align="right">IVA:</td>
-                    <td align="right"> <?php echo $reg->iva; ?></td>
-                </tr>
-                
-                <tr style="display: flex; justify-content: flex-end;">
-                    <td>&nbsp;</td>
                     <td align="right">Transporte:</td>
                     <td align="right"> <?php echo $reg->totalTransporte; ?></td>
                 </tr>
+                <tr style="display: flex; justify-content: flex-end;">
+                    <td>&nbsp;</td>
+                    <td align="right">IVA:</td>
+                    <td align="right"> <?php echo $reg->iva; ?></td>
+                </tr>
 
-                <?php if ($reg->tipoPago === 'Efectivo') { ?>
-                    <tr style="display: flex; justify-content: flex-end;">
-                        <td>&nbsp;</td>
-                        <td align="right">Pago:</td>
-                        <td align="right"> <?php echo $reg->pagoCliente; ?></td>
-                    </tr>
-                    <!--<tr style="display: flex; justify-content: flex-end;">
-                        <td>&nbsp;</td>
-                        <td align="right">Vuelto:</td>
-                        <td align="right"> <?php echo $reg->vueltoCliente; ?></td>
-                    </tr>-->
-                <?php } ?>
+                <tr style="display: flex; justify-content: flex-end;">
+                    <td>&nbsp;</td>
+                    <td align="right">SUBTOTAL:</td>
+                    <td align="right"> <?php echo ($subtotal - $reg->totalDescuento) + $reg->totalTransporte; ?></td>
+                </tr>
 
                 <tr style="display: flex; justify-content: flex-end;">
                     <td>&nbsp;</td>
                     <td align="right"><b>TOTAL:</b></td>
                     <td align="right"><b> <?php echo $reg->totalVenta; ?></b></td>
                 </tr>
+                <?php if ($reg->tipoPago === 'Efectivo') { ?>
+                    <tr style="display: flex; justify-content: flex-end;">
+                        <td>&nbsp;</td>
+                        <td align="right">Pago Cliente:</td>
+                        <td align="right"> <?php echo $reg->pagoCliente; ?></td>
+                    </tr>
+                    <tr style="display: flex; justify-content: flex-end;">
+                        <td>&nbsp;</td>
+                        <td align="right">Su vuelto:</td>
+                        <td align="right"> <?php echo $reg->vueltoCliente; ?></td>
+                    </tr>
+                <?php } ?>
 
 
                 <tr>
